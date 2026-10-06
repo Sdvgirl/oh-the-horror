@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>The Open Door</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0;height:100%;background:#06070b;overflow:hidden;color:#f2dcb4;font-family:"Courier New",monospace;touch-action:manipulation;user-select:none}
+canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+#vg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(3,4,8,.75) 100%);transition:background 2s}
+#vg.d{background:radial-gradient(ellipse at center,transparent 22%,rgba(20,0,4,.92) 100%)}
+#obj{position:absolute;top:14px;left:18px;font-size:14px;letter-spacing:.12em;color:#e8a24a}
+#pr{position:absolute;top:14px;left:0;right:0;text-align:center;font-size:17px;color:#f2dcb4;text-shadow:0 0 8px #000;pointer-events:none}
+#sub{position:absolute;left:8%;right:8%;bottom:7%;text-align:center;font-size:clamp(15px,2.3vw,26px);font-style:italic;line-height:1.35;text-shadow:0 2px 6px #000,0 0 14px #000;opacity:0;transition:opacity .4s;pointer-events:none}
+#ch{position:absolute;left:0;right:0;top:38%;display:none;justify-content:center;gap:28px;z-index:4}
+#ch button{font:inherit;font-size:20px;color:#f2dcb4;background:rgba(10,8,14,.88);border:2px solid #e8a24a;padding:14px 26px;cursor:pointer}
+#ch button:hover{background:#e8a24a;color:#0b0a10}
+#fd,#cd{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;background:#000;opacity:0;pointer-events:none;transition:opacity .9s;padding:0 8%;font-size:clamp(16px,2.6vw,28px);line-height:1.6;white-space:pre-line}
+#cd{z-index:3}#cd.b{background:#f4efe0;color:#2a2620}
+#cd.t{font-family:Georgia,serif;font-size:clamp(34px,8vw,92px);letter-spacing:.14em;color:#e8a24a}
+#st{position:absolute;inset:0;z-index:5;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;cursor:pointer;text-align:center}
+#st h1{font:400 clamp(34px,8vw,92px) Georgia,serif;letter-spacing:.14em;margin:0;color:#e8a24a}
+#st p{margin:0;opacity:.7;font-size:15px;line-height:1.6}
+</style></head><body>
+<canvas id="c" width="320" height="180"></canvas><div id="vg"></div>
+<div id="obj"></div><div id="pr"></div><div id="sub"></div><div id="ch"></div>
+<div id="fd"></div><div id="cd"></div>
+<div id="st"><h1>THE OPEN DOOR</h1><p>Headphones on. Lights low.<br>Point and click: look at everything.</p><p style="opacity:1;color:#e8a24a">click to begin</p></div>
+<script>
+const $=i=>document.getElementById(i),wait=ms=>new Promise(r=>setTimeout(r,ms)),R=Math.random;
+const C=$('c'),X=C.getContext('2d'),W=320,H=180;
+let G=X;const r=(x,y,w,h,c)=>{G.fillStyle=c;G.fillRect(x|0,y|0,w|0,h|0)};
+const dz=(x,y,w,h,c,n)=>{for(let i=0;i<n;i++)r(x+R()*w,y+R()*h,1,1,c)};
+const bg=f=>{const o=document.createElement('canvas');o.width=W;o.height=H;G=o.getContext('2d');f();G=X;return o};
+const door=(x,y,w,h,c,l)=>{r(x-2,y-2,w+4,h+2,'#241a16');r(x,y,w,h,c);r(x+4,y+8,w-8,h/2-14,'rgba(0,0,0,.22)');r(x+4,y+h/2+4,w-8,h/2-14,'rgba(0,0,0,.22)');r(x+w-7,y+h/2,3,3,'#e0b650');if(l)r(x+w/2-5,y+3,10,4,'#c9a85a')};
+const ppl=(x,y,b,s,hr)=>{r(x+3,y+38,4,22,'#1c1c22');r(x+9,y+38,4,22,'#1c1c22');r(x+2,y+8,12,30,b);r(x,y+10,3,22,b);r(x+13,y+10,3,22,b);r(x+4,y,8,9,s);r(x+3,y-1,10,4,hr)};
+
+/* ---------- pixel-art backgrounds, drawn in code ---------- */
+function bgApt(){r(0,0,W,130,'#7d5663');for(let x=0;x<W;x+=8){r(x,0,2,130,'#6c4655');for(let y=4;y<126;y+=16)r(x+4,y,2,2,'#a37a76')}dz(0,0,W,130,'#5e3b49',500);
+r(0,126,W,5,'#3d2c27');r(0,131,W,49,'#5d3f2b');for(let y=131;y<180;y+=10){r(0,y,W,1,'#3f2a1c');for(let x=((y/10)%2)*20;x<W;x+=40)r(x,y,1,10,'#3f2a1c')}dz(0,131,W,49,'#6e4b33',300);
+r(153,0,1,16,'#222');r(150,16,7,4,'#ffe2a0');
+r(120,24,68,56,'#2b2420');r(125,29,58,46,'#1a2640');r(153,29,2,46,'#2b2420');r(125,50,58,2,'#2b2420');r(112,20,12,64,'#8a3b3b');r(184,20,12,64,'#8a3b3b');
+r(6,96,72,38,'#4a3326');r(8,102,68,24,'#54466a');r(12,98,24,10,'#cfc6dc');r(30,108,40,3,'#6a5a7a');r(44,114,28,2,'#3e3354');
+r(82,50,34,84,'#4a3b2c');for(let s=0;s<4;s++){r(84,70+s*18,30,2,'#2c2219');for(let b=0,x=85;x<112;b++){const w=2+(b*7%4);r(x,56+s*18-(b%3)*2,w,14+(b%3)*2,['#c27a4a','#4a6a7a','#8a3b3b','#d9c298','#5a7a4a'][b%5]);x+=w+1}}
+r(194,96,46,30,'#15171d');r(196,126,42,8,'#3a2c24');
+r(246,40,38,94,'#cdd3d6');r(246,80,38,2,'#8e979b');r(250,50,2,20,'#8e979b');r(250,90,2,20,'#8e979b');r(266,60,5,5,'#c44');
+door(288,44,28,90,'#6b4630');
+r(116,118,64,5,'#6a4a34');r(120,123,4,12,'#4a3324');r(172,123,4,12,'#4a3324');}
+function bgHall(){r(0,0,W,24,'#2c2a33');r(0,24,W,68,'#5f6e5a');r(0,92,W,40,'#4a3a2e');r(0,90,W,3,'#8a7656');for(let x=0;x<W;x+=14)r(x,95,1,37,'#3b2e24');dz(0,24,W,108,'#4f5c4b',600);
+r(0,132,W,48,'#3e403a');for(let y=132;y<180;y+=8)for(let x=((y/8)%2)*12;x<W;x+=24)r(x,y,12,8,'#484a43');
+[80,170,260].forEach(x=>{r(x-9,24,18,3,'#cbbd90')});r(196,24,18,5,'#3b4750');
+door(12,44,32,88,'#6b4630',1);door(150,44,36,88,'#3a2a24',1);
+r(260,38,54,94,'#555a62');r(264,44,22,88,'#8a8f96');r(288,44,22,88,'#8a8f96');r(286,44,2,88,'#2a2c32');r(280,30,18,6,'#222');
+r(112,70,14,18,'#e8e4d8');r(115,73,8,6,'#9a9488');r(115,82,8,1,'#777');r(138,127,9,5,'#3a2f2a');r(148,127,9,5,'#3a2f2a')}
+function bgNb(){r(0,0,W,130,'#454a43');r(0,130,W,50,'#2b2a2a');r(0,126,W,5,'#2a2d28');
+door(4,44,26,90,'#3a2a24');r(40,98,64,36,'#3b3a3d');r(42,104,60,24,'#55565c');r(170,100,52,34,'#3d3a38');r(176,70,40,30,'#14161c');
+r(232,42,24,56,'#555');r(235,45,18,50,'#6c7b82');r(262,92,54,42,'#3d3a38');r(262,90,54,3,'#55524e');r(272,100,1,30,'#2a2826');r(292,100,1,30,'#2a2826');
+dz(0,0,W,180,'#6a6e66',900);dz(0,0,W,180,'#222',300);
+r(46,100,20,9,'#b8b4aa');r(52,103,8,3,'#8d8a82');
+r(128,100,3,16,'#c2a77c');r(128,116,22,5,'#d9c298');r(129,121,3,13,'#c2a77c');r(146,121,3,13,'#c2a77c');r(128,100,22,3,'#d9c298');
+r(284,82,5,8,'#cfe4ee')}
+const BG={};
+/* ---------- state ---------- */
+const S={sc:'apt',st:'title',lock:1,dk:.22,flick:0,lt:0,fr:0,insp:0,hb:0,sil:0,run:0,gap:0,shp:0,lampOut:0,nbd:{x:4,y:44,w:26,h:90}};
+const got={k:0,w:0,u:0};let M_={x:-9,y:-9};
+function dyn(t){if(S.sc==='apt'){
+ r(198,100,38,22,'#26334a');if(R()<.04)r(198,100+R()*18,38,3,'#3b4f72');
+ for(let i=0;i<16;i++){const x=126+(i*37%54),y=30+((t*70*(.5+i%3*.3)+i*29)%44);r(x,y,1,3,'rgba(130,160,210,.8)')}
+ if(!got.k)r(124,111,8,5,'#e0b050');if(!got.w)r(146,111,14,6,'#4a3326');if(!got.u){r(166,86,6,34,'#2d6a6a');r(164,84,10,4,'#3f8a8a')}
+ if(S.key2)r(158,111,10,4,'#f0c860')}
+else if(S.sc==='hall'){
+ if(S.st!=='back'&&S.st!=='in'&&S.st!=='run'&&S.st!=='last'){ppl(58,72,'#8a6a7a','#d9b79a','#aaa');ppl(224,66,'#3f4f66','#cfa88a','#2a2018')}
+ const gx=186-S.gap;if(S.gap){r(gx,44,S.gap,88,'#12151d');if(S.shp){X.save();X.beginPath();X.rect(gx,44,S.gap,88);X.clip();r(gx+S.gap/2-3,66,7,7,'#020203');r(gx+S.gap/2-6,72,13,40,'#020203');X.restore()}}
+ if(t%1.6<.12)r(204,29+(t%1.6)*260,1,3,'#7fa2c4');
+ r(285,31,6,4,S.st==='run'&&(t*4|0)%2?'#e04a3a':'#e8a24a')}
+else{
+ if(S.run){r(4,44,26,90,'#2b2a2a');const d=S.nbd;door(d.x,d.y,d.w,d.h,'#3a2a24')}
+ if(S.tvOn){r(180,74,32,22,'#222');dz(180,74,32,22,'#ddd',90);dz(180,74,32,22,'#555',60)}}}
+function fx(){if(S.sc==='nb'){const rad=S.run?42:64,g=X.createRadialGradient(M_.x,M_.y,4,M_.x,M_.y,rad);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.95)');X.fillStyle=g;X.fillRect(0,0,W,H)}
+else{X.fillStyle='rgba(5,7,16,'+S.dk+')';X.fillRect(0,0,W,H);X.globalCompositeOperation='lighter';
+ const gl=S.sc==='apt'?[[153,22,130,.5]]:[[80,26,80,.4],[170,26,80,.4],[260,26,80,.4]].filter((_,i)=>!(i===1&&S.lampOut));
+ for(const[x,y,rd,a]of gl){const g=X.createRadialGradient(x,y,2,x,y,rd);g.addColorStop(0,'rgba(255,190,100,'+a+')');g.addColorStop(1,'rgba(255,190,100,0)');X.fillStyle=g;X.fillRect(0,0,W,H)}
+ X.globalCompositeOperation='source-over'}
+if(S.lt){X.fillStyle='rgba(170,195,255,.3)';X.fillRect(0,0,W,H)}
+if(S.flick&&R()<.22){X.fillStyle='rgba(0,0,0,.65)';X.fillRect(0,0,W,H)}}
+
+/* ---------- hotspots (x,y,w,h in canvas pixels) ---------- */
+const hit=(a,b)=>a.find(s=>b.x>=s.x&&b.x<=s.x+s.w&&b.y>=s.y&&b.y<=s.y+s.h);
+function HS(){if(S.lock)return[];
+if(S.sc==='apt')return[
+{n:'Window',x:112,y:20,w:84,h:64,f:()=>note("Day six. The rain hasn't paused once.")},
+{n:'Bed',x:6,y:96,w:72,h:38,f:()=>note("Unmade. The sheets remember me.")},
+{n:'Bookshelf',x:82,y:50,w:34,h:84,f:()=>note("Three unread paperbacks. Two I've reread to death.")},
+{n:'TV',x:194,y:96,w:46,h:38,f:()=>note("Forty-one episodes in. Don't judge me.")},
+{n:'Refrigerator',x:246,y:40,w:38,h:94,f:fridge},
+{n:'Door',x:288,y:44,w:28,h:90,f:aptDoor},
+{n:'Table',x:116,y:116,w:64,h:20,f:()=>note("Where my keys go to hide.")},
+!got.k&&{n:'Keys',x:122,y:108,w:14,h:10,f:()=>{got.k=1;note("Keys.")}},
+!got.w&&{n:'Wallet',x:144,y:108,w:18,h:10,f:()=>{got.w=1;note("Wallet. Eleven dollars and a loyalty card.")}},
+!got.u&&{n:'Umbrella',x:162,y:82,w:14,h:40,f:()=>{got.u=1;note("Umbrella. It has opinions about the wind.")}},
+S.key2&&{n:'Key',x:156,y:108,w:14,h:8,f:()=>note("A key. My apartment number is stamped on it.")}].filter(Boolean);
+if(S.sc==='hall'){const run=S.st==='run',pe=S.st==='hall';return[
+{n:'My apartment',x:12,y:44,w:32,h:88,f:()=>note(run?"Too far.":pe?"Groceries first.":"Not yet. That other door is bothering me.")},
+pe&&{n:'Neighbour',x:54,y:70,w:24,h:62,f:async()=>{S.lock=1;await say("“Still raining.”",1800);await say("She glances past me, toward the far end of the hall. Then back. Like nothing happened.",4200);S.lock=0}},
+{n:'Missing flyer',x:112,y:70,w:14,h:18,f:()=>note("MISSING. The photo has bled into a grey smear.")},
+{n:'Muddy shoes',x:136,y:124,w:24,h:10,f:()=>note("Laces still tied. Like someone stepped out of them.")},
+{n:'Apartment 4C',x:148,y:44,w:40,h:88,f:()=>{if(S.st==='back')atDoor();else note(run?"No. No no no.":"Someone else's door.")}},
+pe&&{n:'Neighbour',x:220,y:64,w:24,h:64,f:async()=>{S.lock=1;await say("“You going out?”",1700);await say("“Yeah.”",1200);await say("“Lucky you.”",2000);S.lock=0}},
+{n:'Elevator',x:260,y:38,w:54,h:94,f:()=>{if(pe)ride();else if(run)mash();else note("Door first. ...Nothing is melting. Yet.")}}].filter(Boolean)}
+const d=S.nbd;return[
+{n:'Exit',x:d.x,y:d.y,w:d.w,h:d.h,f:()=>{if(S.run)out();else note("Not yet.")}},
+{n:'Pillow',x:40,y:96,w:64,h:14,f:()=>insp('p',"A dent in the pillow. Fresh? Old? I can't tell, and that bothers me.")},
+{n:'Bed',x:40,y:110,w:64,h:24,f:()=>note("Never slept in. Except... no.")},
+{n:'Chair',x:126,y:98,w:26,h:38,f:()=>insp('c',"Dust coats everything here. Everything except this chair.")},
+{n:'TV',x:170,y:68,w:52,h:66,f:()=>note(S.tvOn?"Static.":"Dead black screen. Not even plugged in.")},
+{n:'Mirror',x:230,y:40,w:28,h:60,f:mirror},
+{n:'Glass',x:282,y:80,w:10,h:12,f:()=>insp('g',"A glass of water. Half full. In an apartment that smells like decades.")},
+{n:'Counter',x:262,y:92,w:54,h:42,f:()=>note("Everything here looks unused.")}]}
+
+/* ---------- helpers ---------- */
+let sid=0;async function say(t,ms){const e=$('sub'),i=++sid;e.textContent=t;e.style.opacity=1;await wait(ms||Math.max(2300,t.length*60));if(i===sid)e.style.opacity=0;await wait(250)}
+const note=t=>{say(t,2600)};
+async function card(t,ms,cls){const e=$('cd');e.className=cls||'';e.textContent=t;e.style.opacity=1;await wait(ms||3000);e.style.opacity=0;await wait(900)}
+const fade=async(on,ms)=>{$('fd').style.opacity=on?1:0;await wait(ms||900)};
+const choose=(a,b)=>new Promise(res=>{const c=$('ch');c.innerHTML='';[a,b].forEach((t,i)=>{const bt=document.createElement('button');bt.textContent=t;bt.onclick=()=>{c.style.display='none';res(i)};c.appendChild(bt)});c.style.display='flex'});
+const seen={};function insp(k,t){note(t);if(seen[k])return;seen[k]=1;if(++S.insp===3)setTimeout(climax,2800)}
+const setObj=t=>{$('obj').textContent=t?'▸ '+t:''};
+
+/* ---------- audio (fully synthesised) ---------- */
+let A,mg,rainG,humG,musG,NB;
+function initAudio(){A=new (window.AudioContext||window.webkitAudioContext)();mg=A.createGain();mg.gain.value=.85;mg.connect(A.destination);
+NB=A.createBuffer(1,A.sampleRate*2,A.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=R()*2-1;
+rainG=A.createGain();rainG.gain.value=0;rainG.connect(mg);
+const loop=(f,q,t,g)=>{const s=A.createBufferSource();s.buffer=NB;s.loop=true;const fl=A.createBiquadFilter();fl.type=t;fl.frequency.value=f;fl.Q.value=q;const gn=A.createGain();gn.gain.value=g;s.connect(fl);fl.connect(gn);gn.connect(rainG);s.start()};
+loop(2600,.4,'bandpass',.5);loop(700,.5,'lowpass',.35);
+humG=A.createGain();humG.gain.value=0;const lp=A.createBiquadFilter();lp.type='lowpass';lp.frequency.value=170;[55,58.4,82.5].forEach(f=>{const o=A.createOscillator();o.type='sawtooth';o.frequency.value=f;o.connect(lp);o.start()});lp.connect(humG);humG.connect(mg);
+musG=A.createGain();musG.gain.value=0;musG.connect(mg);rain(.5,3);
+const sc=[523.25,587.33,659.25,783.99,880,392];
+setInterval(()=>{if(musG.gain.value>.01&&R()<.55)blip(sc[R()*sc.length|0]*(R()<.3?.5:1),2.6,.12,'sine',musG)},650);
+(function drip(){if(!S.sil)blip(900+R()*900,.06,.04+R()*.03);setTimeout(drip,1200+R()*3800)})();
+(function storm(){if(S.sc==='apt'&&!S.lock&&R()<.5){S.lt=1;thunder();setTimeout(()=>S.lt=0,110)}setTimeout(storm,14000+R()*14000)})();
+setInterval(()=>{if(S.hb){thump(.35);setTimeout(()=>thump(.2),190)}},780)}
+function blip(f,dur,v,type,dest){if(!A)return;const o=A.createOscillator(),g=A.createGain(),t=A.currentTime;o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(dest||mg);o.start(t);o.stop(t+dur+.05)}
+function nz(f,dur,v){if(!A)return;const s=A.createBufferSource(),fl=A.createBiquadFilter(),g=A.createGain(),t=A.currentTime;s.buffer=NB;fl.type='lowpass';fl.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);s.connect(fl);fl.connect(g);g.connect(mg);s.start(t,R());s.stop(t+dur)}
+const thump=v=>{if(!A)return;const o=A.createOscillator(),g=A.createGain(),t=A.currentTime;o.frequency.setValueAtTime(75,t);o.frequency.exponentialRampToValueAtTime(35,t+.15);g.gain.setValueAtTime(v*1.4,t);g.gain.exponentialRampToValueAtTime(.0001,t+.2);o.connect(g);g.connect(mg);o.start(t);o.stop(t+.25)};
+const knock=()=>{nz(260,.16,.9);thump(.9)},thunder=()=>nz(110,3.2,.7),step=v=>nz(380,.07,v||.1),ding=()=>{blip(1320,1,.1);setTimeout(()=>blip(990,1.2,.08),160)};
+const hum=(v,s)=>humG&&humG.gain.linearRampToValueAtTime(v,A.currentTime+(s||1.5));
+const mus=v=>musG&&musG.gain.linearRampToValueAtTime(v,A.currentTime+2);
+const rain=(v,s)=>rainG&&rainG.gain.linearRampToValueAtTime(v,A.currentTime+(s||2));
+
+/* ---------- story ---------- */
+async function begin(){const f=$('fd');f.style.transition='none';f.style.opacity=1;$('st').remove();initAudio();A.resume();await wait(2500);f.style.transition='opacity .9s';
+await say("Disclaimer: I'm not your typical horror protagonist.",3600);
+await say("Horror protagonists have a death wish. I have a couch.",3600);
+await say("I don't investigate strange noises. I turn the volume up.",3800);
+await say("Unfortunately... I was out of food.",3200);
+await card("THE OPEN DOOR",3200,'t');S.st='apt';mus(.5);await fade(0,1200);S.lock=0}
+async function fridge(){if(S.fr)return note("Still empty. Still embarrassing.");S.fr=1;S.lock=1;await say("Half a bottle of water. Something expired. One sad vegetable.",4200);await say("Right. That's embarrassing.",2400);S.lock=0;setObj('GET GROCERIES')}
+function aptDoor(){if(S.st==='home')return note("I'm not going back out there.");if(!S.fr)return note("Fridge first. Let me see what I actually have.");const m=[!got.k&&'keys',!got.w&&'wallet',!got.u&&'umbrella'].filter(Boolean);if(m.length)return note("Still need: "+m.join(', ')+".");leave()}
+async function leave(){S.lock=1;mus(0);await say("Keys. Wallet. Umbrella. Deep breath. Out.",3200);await fade(1,600);S.sc='hall';S.st='hall';S.dk=.4;rain(.42);hum(.025);await fade(0,900);S.lock=0;
+await say("The hallway behind me is empty. Of course it is.",3200)}
+async function ride(){S.lock=1;S.st='ride';await say("The button doesn't light.",1800);blip(500,.1,.1);await say("Again. The light stutters on.",2400);S.flick=1;await wait(1600);ding();S.flick=0;
+await fade(1,700);hum(.2,1);await say("Empty. Doors closing.",2200);await wait(1500);hum(0,.05);S.sil=1;await say("...It stopped.",4200);await say("Lights still on. Nothing. Just... stopped.",3000);
+hum(.2,.3);S.sil=0;await say("Great. Exactly what I needed.",2600);ding();
+await card("Outside.\nRain on awnings. Rain on asphalt.\nAcross the road, someone is standing still.\nThen lightning —\nand there's no one there.",6500);
+S.sil=1;thunder();await card("FRESH MARKET\nFluorescent. Humming. Someone is whistling.\nBread. Eggs. Rice. Something green.\nMy phone is at 12%.\nIt's almost comforting.",7500,'b');await back()}
+async function back(){S.st='back';rain(.65);hum(.05);S.dk=.58;S.sil=0;S.lampOut=1;S.gap=5;
+await card("Home. The rain is heavier.\nFewer people out.\nThe building looks different in the storm.",5500);await fade(0,1200);setObj('GO HOME');S.lock=0;
+await say("One hallway light is out. I walk past it.",3200);await wait(600);await say("Apartment 4C. The door is open. Only slightly.",3200);setObj('')}
+async function atDoor(){S.lock=1;await say("That's... new.",2400);
+const c=await choose('WALK AWAY','INVESTIGATE');
+if(c===0){await say("The elevator is right there. I'm not an idiot.",3200);await fade(1,1200);await say("I put the groceries away. I don't know who lived there.",4200);await say("And honestly, I didn't want to know.",3400);
+await card("THE OPEN DOOR",3500,'t');rain(0,.2);await wait(900);knock();await card("A sound behind me. The door at the end of the hall.\nClosed.",5000);const e=$('cd');e.className='';e.textContent="CASE FILE UNLOCKED.\n\n(reload to play again)";e.style.opacity=1;return}
+await say("“Just a quick look.”",2400);await say("That's what every idiot in a horror movie says.",3300);
+blip(740,.5,.12);await wait(900);knock();await wait(700);knock();await wait(700);knock();await wait(1600);
+await fade(1,500);S.sc='nb';S.st='in';S.gap=0;hum(.1,3);rain(.2,3);await fade(0,900);setObj('LOOK AROUND');
+await say("No creak. It just opens.",2800);S.lock=0;await say("Phone flashlight on. Nothing. Just dust and old furniture.",3600)}
+async function mirror(){S.lock=1;await say("I wipe a patch clean with my sleeve. Someone is standing behind me.",3400);await say("I turn. Nobody.",2000);S.lock=0}
+async function climax(){if(S.st!=='in')return;S.lock=1;S.tvOn=1;nz(3000,1.2,.35);await say("The TV is on. I didn't touch it.",3000);
+await say("That's the hallway. That's... me. From behind. Walking in.",3800);await say("Now she's standing outside the door. I haven't done that yet.",3800);
+S.lock=0;S.hb=1;S.flick=1;$('vg').className='d';hum(.3,2);setObj('');await say("The air is thick. I can't breathe right.",3000);await say("No.",1400);await say("Nope.",1400);
+hum(.45,.5);nz(900,2,.6);$('sub').style.fontSize='64px';await say("RUN.",1600);$('sub').style.fontSize='';
+S.run=1;S.st='in';setObj('GET OUT');const sh=()=>{if(!S.run)return;const w=14+R()*12;S.nbd={x:30+R()*260,y:40+R()*40,w,h:60+R()*30};setTimeout(sh,900)};sh()}
+async function out(){S.run=0;S.lock=1;S.tvOn=0;await fade(1,350);S.sc='hall';S.st='run';S.gap=14;S.mash=0;S.lampOut=1;S.dk=.6;S.lock=0;await fade(0,300);setObj('PRESS THE ELEVATOR BUTTON');
+S.ft=setInterval(()=>step(.3),950);say("Step. ...Step. ...Step.",2400)}
+function mash(){S.mash++;blip(500,.1,.12);if(S.mash>=3)return escape();note(["Come on.","Come on. Come on. Come on."][S.mash-1])}
+async function escape(){S.lock=1;clearInterval(S.ft);setObj('');ding();S.st='last';S.shp=1;await wait(500);await say("I look back. The apartment door is closing. By itself.",3000);
+for(let g=14;g>=0;g--){S.gap=g;await wait(190)}S.shp=0;await fade(1,500);S.hb=0;S.flick=0;hum(0);await home()}
+async function home(){S.st='home';S.sc='apt';S.sil=0;S.dk=.3;$('vg').className='';await card("Home.",2200);await fade(0,1000);rain(.6);S.lock=0;
+await say("Lock. Double lock. Groceries on the floor.",3200);await say("“It was probably nothing.”",3000);await say("I put the eggs away. My hands won't stop.",3400);
+S.key2=1;await say("There's something on the table.",3000);await say("A key. It has my apartment number on it.",3600);S.lock=1;
+rain(0,.5);S.sil=1;hum(0);await wait(3500);await say("The rain stopped. First time all week.",3200);await wait(2500);
+knock();await wait(1700);knock();await wait(1500);knock();await wait(2500);await say("No.",1600);
+knock();await wait(220);knock();await wait(220);knock();await fade(1,100);await wait(1800);
+await card("THE OPEN DOOR",4000,'t');await card("CASE 001 — STATUS: UNRESOLVED\n\nNEW FILE AVAILABLE:\nTHE APARTMENT",7000);const e=$('cd');e.className='';e.textContent="(reload to play again)";e.style.opacity=1}
+
+/* ---------- input + loop ---------- */
+function mpos(e){const b=C.getBoundingClientRect(),s=Math.min(b.width/W,b.height/H);return{x:(e.clientX-b.left-(b.width-W*s)/2)/s,y:(e.clientY-b.top-(b.height-H*s)/2)/s}}
+addEventListener('pointermove',e=>{M_=mpos(e)});
+addEventListener('pointerdown',e=>{if(e.target.closest('button,#st'))return;M_=mpos(e);const g=hit(HS(),M_);if(g)g.f()});
+$('st').onclick=begin;
+function frame(ms){const t=ms/1000;X.drawImage(BG[S.sc],0,0);dyn(t);fx();const g=hit(HS(),M_);$('pr').textContent=g&&g.n?g.n:'';C.style.cursor=g?'pointer':'default';requestAnimationFrame(frame)}
+BG.apt=bg(bgApt);BG.hall=bg(bgHall);BG.nb=bg(bgNb);requestAnimationFrame(frame);
+</script></body></html>
