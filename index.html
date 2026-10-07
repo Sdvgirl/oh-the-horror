@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><title>The Open Door</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-html,body{margin:0;height:100%;background:#06070b;overflow:hidden;color:#f2dcb4;font-family:"Courier New",monospace;touch-action:manipulation;user-select:none}
+html,body{margin:0;height:100%;background:#06070b;overflow:hidden;color:#f2dcb4;font-family:'Pixelify Sans','Courier New',monospace;touch-action:manipulation;user-select:none}
 canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
 #vg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(3,4,8,.75) 100%);transition:background 2s}
 #vg.d{background:radial-gradient(ellipse at center,transparent 22%,rgba(20,0,4,.92) 100%)}
 #obj{position:absolute;top:14px;left:18px;font-size:14px;letter-spacing:.12em;color:#e8a24a}
 #pr{position:absolute;top:14px;left:0;right:0;text-align:center;font-size:17px;color:#f2dcb4;text-shadow:0 0 8px #000;pointer-events:none}
-#sub{position:absolute;left:8%;right:8%;bottom:7%;text-align:center;font-size:clamp(15px,2.3vw,26px);font-style:italic;line-height:1.35;text-shadow:0 2px 6px #000,0 0 14px #000;opacity:0;transition:opacity .4s;pointer-events:none}
+#sub{position:absolute;left:8%;right:8%;bottom:7%;text-align:center;font-size:clamp(15px,2.3vw,26px);line-height:1.35;text-shadow:0 2px 6px #000,0 0 14px #000;opacity:0;transition:opacity .4s;pointer-events:none}
 #ch{position:absolute;left:0;right:0;top:38%;display:none;justify-content:center;gap:28px;z-index:4}
 #ch button{font:inherit;font-size:20px;color:#f2dcb4;background:rgba(10,8,14,.88);border:2px solid #e8a24a;padding:14px 26px;cursor:pointer}
 #ch button:hover{background:#e8a24a;color:#0b0a10}
@@ -18,9 +19,17 @@ canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image
 #st{position:absolute;inset:0;z-index:5;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;cursor:pointer;text-align:center}
 #st h1{font:400 clamp(34px,8vw,92px) Georgia,serif;letter-spacing:.14em;margin:0;color:#e8a24a}
 #st p{margin:0;opacity:.7;font-size:15px;line-height:1.6}
+#ui{position:absolute;top:10px;right:12px;display:flex;gap:8px;z-index:6}
+#ui button{font:inherit;font-size:20px;background:rgba(60,36,44,.75);color:#ffe9c2;border:2px solid #f4b98a;border-radius:10px;width:44px;height:40px;cursor:pointer}
+#set{position:absolute;inset:0;z-index:7;display:none;align-items:center;justify-content:center;background:rgba(20,10,16,.6)}
+#set div{background:#fff1d6;color:#5a3a3a;border:4px solid #e58f8f;border-radius:18px;padding:22px 28px;width:min(86vw,360px);font-size:18px}
+#set h2{margin:0 0 10px;text-align:center}#set label{display:flex;justify-content:space-between;gap:12px;margin:12px 0;align-items:center}
+#set input{flex:1;accent-color:#e58f8f}#set button{display:block;margin:14px auto 0;font:inherit;font-size:18px;background:#e58f8f;color:#fff;border:0;border-radius:10px;padding:8px 24px;cursor:pointer}
 </style></head><body>
 <canvas id="c" width="320" height="180"></canvas><div id="vg"></div>
 <div id="obj"></div><div id="pr"></div><div id="sub"></div><div id="ch"></div>
+<div id="ui"><button id="mt" title="Sound on/off">🔊</button><button id="gr" title="Settings">⚙</button></div>
+<div id="set"><div><h2>Settings</h2><label>Master<input id="v_m" type="range" min="0" max="100"></label><label>Music<input id="v_mu" type="range" min="0" max="100"></label><label>Rain<input id="v_r" type="range" min="0" max="100"></label><label>Effects<input id="v_s" type="range" min="0" max="100"></label><button id="sx">Done</button></div></div>
 <div id="fd"></div><div id="cd"></div>
 <div id="st"><h1>THE OPEN DOOR</h1><p>Headphones on. Lights low.<br>Point and click: look at everything.</p><p style="opacity:1;color:#e8a24a">click to begin</p></div>
 <script>
@@ -29,20 +38,47 @@ const C=$('c'),X=C.getContext('2d'),W=320,H=180;
 let G=X;const r=(x,y,w,h,c)=>{G.fillStyle=c;G.fillRect(x|0,y|0,w|0,h|0)};
 const dz=(x,y,w,h,c,n)=>{for(let i=0;i<n;i++)r(x+R()*w,y+R()*h,1,1,c)};
 const bg=f=>{const o=document.createElement('canvas');o.width=W;o.height=H;G=o.getContext('2d');f();G=X;return o};
-const door=(x,y,w,h,c,l)=>{r(x-2,y-2,w+4,h+2,'#241a16');r(x,y,w,h,c);r(x+4,y+8,w-8,h/2-14,'rgba(0,0,0,.22)');r(x+4,y+h/2+4,w-8,h/2-14,'rgba(0,0,0,.22)');r(x+w-7,y+h/2,3,3,'#e0b650');if(l)r(x+w/2-5,y+3,10,4,'#c9a85a')};
+const door=(x,y,w,h,c,l)=>{r(x-2,y-2,w+4,h+2,'#6e4528');r(x,y,w,h,c);r(x+4,y+8,w-8,h/2-14,'rgba(0,0,0,.22)');r(x+4,y+h/2+4,w-8,h/2-14,'rgba(0,0,0,.22)');r(x+w-7,y+h/2,3,3,'#e0b650');if(l)r(x+w/2-5,y+3,10,4,'#c9a85a')};
 const ppl=(x,y,b,s,hr)=>{r(x+3,y+38,4,22,'#1c1c22');r(x+9,y+38,4,22,'#1c1c22');r(x+2,y+8,12,30,b);r(x,y+10,3,22,b);r(x+13,y+10,3,22,b);r(x+4,y,8,9,s);r(x+3,y-1,10,4,hr)};
 
 /* ---------- pixel-art backgrounds, drawn in code ---------- */
-function bgApt(){r(0,0,W,130,'#7d5663');for(let x=0;x<W;x+=8){r(x,0,2,130,'#6c4655');for(let y=4;y<126;y+=16)r(x+4,y,2,2,'#a37a76')}dz(0,0,W,130,'#5e3b49',500);
-r(0,126,W,5,'#3d2c27');r(0,131,W,49,'#5d3f2b');for(let y=131;y<180;y+=10){r(0,y,W,1,'#3f2a1c');for(let x=((y/10)%2)*20;x<W;x+=40)r(x,y,1,10,'#3f2a1c')}dz(0,131,W,49,'#6e4b33',300);
-r(153,0,1,16,'#222');r(150,16,7,4,'#ffe2a0');
-r(120,24,68,56,'#2b2420');r(125,29,58,46,'#1a2640');r(153,29,2,46,'#2b2420');r(125,50,58,2,'#2b2420');r(112,20,12,64,'#8a3b3b');r(184,20,12,64,'#8a3b3b');
-r(6,96,72,38,'#4a3326');r(8,102,68,24,'#54466a');r(12,98,24,10,'#cfc6dc');r(30,108,40,3,'#6a5a7a');r(44,114,28,2,'#3e3354');
-r(82,50,34,84,'#4a3b2c');for(let s=0;s<4;s++){r(84,70+s*18,30,2,'#2c2219');for(let b=0,x=85;x<112;b++){const w=2+(b*7%4);r(x,56+s*18-(b%3)*2,w,14+(b%3)*2,['#c27a4a','#4a6a7a','#8a3b3b','#d9c298','#5a7a4a'][b%5]);x+=w+1}}
-r(194,96,46,30,'#15171d');r(196,126,42,8,'#3a2c24');
-r(246,40,38,94,'#cdd3d6');r(246,80,38,2,'#8e979b');r(250,50,2,20,'#8e979b');r(250,90,2,20,'#8e979b');r(266,60,5,5,'#c44');
-door(288,44,28,90,'#6b4630');
-r(116,118,64,5,'#6a4a34');r(120,123,4,12,'#4a3324');r(172,123,4,12,'#4a3324');}
+function bgApt(){
+r(0,0,W,124,'#f3e2bb');for(let x=0;x<W;x+=10)r(x,0,1,124,'#ecd8ab');dz(0,0,W,124,'#e6d0a0',260);
+for(let y=8;y<80;y+=14)for(let x=((y/14|0)%2)*10+4;x<W;x+=20)r(x,y,2,2,'#e7b8a8');
+r(0,84,W,40,'#eaa9a0');for(let x=0;x<W;x+=10)r(x,86,1,38,'#de9990');r(0,83,W,3,'#fff6e2');r(0,120,W,5,'#a9714a');
+r(0,125,W,55,'#c98d57');for(let y=125;y<180;y+=9){r(0,y,W,1,'#a8703f');for(let x=((y/9|0)%2)*17;x<W;x+=34)r(x,y,1,9,'#a8703f')}dz(0,125,W,55,'#dfa56e',280);
+r(94,140,126,28,'#5aa7a3');r(100,136,114,36,'#5aa7a3');r(98,144,118,20,'#f6e8c6');r(104,142,106,26,'#f6e8c6');r(108,148,98,14,'#e58f8f');r(114,152,86,6,'#f6e8c6');
+r(92,18,68,60,'#fff6e2');r(92,74,68,6,'#f1dcae');
+r(80,12,92,4,'#a9714a');r(77,11,4,6,'#ffd36a');r(171,11,4,6,'#ffd36a');
+for(const x of[82,152]){r(x,16,18,64,'#f290a6');for(let i=2;i<18;i+=4)r(x+i,16,1,64,'#e0738d');r(x,52,18,3,'#ffd36a');r(x+4,56,4,10,'#f290a6')}
+for(let i=0;i<10;i++)r(84+i*8,18,5,4,'#f6a9bb');
+r(98,62,12,12,'#cf6a3e');r(97,60,14,3,'#e0825a');r(96,48,6,14,'#6bbf59');r(104,44,6,18,'#58a94a');r(100,52,6,10,'#7fd069');
+r(6,70,78,30,'#a9714a');r(6,66,78,6,'#bf8355');r(8,98,76,32,'#a9714a');r(10,92,74,10,'#a9714a');
+r(10,96,72,30,'#9fd3cf');for(let i=0;i<7;i++)for(let j=0;j<3;j++)r(12+i*10,98+j*9,9,8,['#f290a6','#ffd36a','#9fd3cf','#fff6e2','#b7a3e0'][(i*2+j*3)%5]);
+r(10,124,72,3,'#7fb8b4');r(12,92,22,10,'#fff6e2');r(36,92,22,10,'#ffe3ea');r(6,128,5,6,'#7a4d2a');r(78,128,5,6,'#7a4d2a');
+r(60,86,12,12,'#fffaf0');r(61,78,3,9,'#fffaf0');r(67,78,3,9,'#fffaf0');r(62,80,1,6,'#f6a9bb');r(68,80,1,6,'#f6a9bb');r(62,90,2,2,'#333');r(67,90,2,2,'#333');r(64,93,3,1,'#f290a6');
+door(170,40,24,86,'#8fcfc0');r(176,48,12,8,'#fff6e2');r(180,50,4,4,'#f290a6');
+r(204,14,22,26,'#a9714a');r(206,16,18,22,'#a7dcef');r(206,30,18,8,'#6bbf59');r(214,19,5,5,'#ffd36a');
+r(230,18,14,16,'#a9714a');r(232,20,10,12,'#f6a9bb');r(235,23,4,4,'#fff6e2');
+r(204,58,48,3,'#a9714a');r(208,48,7,10,'#cf6a3e');r(209,40,5,9,'#6bbf59');r(222,46,4,12,'#f290a6');r(227,44,4,14,'#5aa7a3');r(232,47,4,11,'#ffd36a');r(238,50,8,8,'#fff6e2');
+r(200,102,48,28,'#a9714a');r(204,108,18,18,'#7a4d2a');r(226,108,18,18,'#7a4d2a');r(204,76,40,28,'#3a3340');r(200,100,48,3,'#bf8355');
+r(256,36,36,98,'#a8e0cf');r(258,34,32,3,'#a8e0cf');r(256,78,36,2,'#7fbfae');r(259,50,2,18,'#fff6e2');r(259,88,2,18,'#fff6e2');r(270,52,5,5,'#f290a6');r(278,58,5,5,'#ffd36a');r(266,42,9,9,'#fff48a');r(256,132,36,2,'#7fbfae');
+door(296,44,22,88,'#c98f5a');r(301,56,12,12,'#6bbf59');r(304,59,6,6,'#c98f5a');r(305,54,4,4,'#e0485a');
+r(110,110,82,5,'#f6e8c6');r(110,115,82,2,'#f290a6');r(114,117,4,20,'#a9714a');r(184,117,4,20,'#a9714a');
+r(38,148,10,5,'#f6a9bb');r(50,148,10,5,'#f6a9bb');r(38,148,10,2,'#fff6e2');r(50,148,10,2,'#fff6e2')}
+function bgFr(){r(0,0,W,180,'#2a2230');r(40,10,240,164,'#a8e0cf');r(48,18,224,148,'#f1fbf7');
+for(let i=0;i<3;i++)r(48,64+i*40,224,4,'#bfe8dc');r(40,10,8,164,'#8fcfbd');r(272,10,8,164,'#8fcfbd');r(148,18,24,4,'#fff6c0');
+r(70,28,12,36,'#cfe9f5');r(70,44,12,20,'#8ec8e8');r(73,24,6,5,'#4a8fb3');r(96,48,14,16,'#d6455e');r(96,44,14,5,'#f6e8c6');r(99,53,8,5,'#fff6e2');
+r(190,50,40,14,'#e8d8b0');r(60,100,30,4,'#f6e8c6')}
+function bgBath(){r(0,0,W,180,'#cfe8f0');for(let x=0;x<W;x+=14)r(x,0,1,98,'#bcdbe6');dz(0,0,W,98,'#c0dde8',120);r(0,96,W,4,'#fff');
+r(0,100,W,80,'#f6f1e6');for(let y=100;y<180;y+=12)for(let x=((y/12|0)%2)*12;x<W;x+=24)r(x,y,12,12,'#e8dfcc');
+r(8,34,88,3,'#aaa');r(10,36,84,72,'#9ed4e8');for(let i=0;i<8;i++)for(let j=0;j<4;j++)r(16+i*10,42+j*16+(i%2)*6,4,4,'#ffe27a');r(66,38,14,3,'#bbb');
+r(6,110,92,28,'#fff');r(6,132,92,6,'#dfe9ee');r(80,102,10,8,'#ffd36a');r(88,105,4,2,'#f08a3b');r(84,104,2,2,'#333');
+r(130,62,30,22,'#fff');r(143,64,4,3,'#bbb');r(128,90,34,24,'#fff');r(134,112,22,16,'#fff');r(126,88,38,4,'#f4a6b8');r(112,78,8,12,'#fff6e2');
+r(200,30,44,50,'#f4a6b8');r(204,34,36,42,'#cfe9f5');r(208,38,5,14,'#fff');r(202,92,44,12,'#fff');r(214,102,18,30,'#fff');r(218,86,8,6,'#bbb');r(224,92,6,3,'#f4a6b8');
+r(260,38,3,10,'#aaa');r(262,48,24,46,'#f08aa8');for(let i=0;i<4;i++)r(262,52+i*10,24,3,'#fff');
+r(118,148,64,18,'#8fc7c0');r(120,150,60,14,'#f6f1e6');r(124,152,52,10,'#8fc7c0');
+door(292,44,22,88,'#c98f5a');r(262,126,18,14,'#cf6a3e');r(266,114,10,14,'#6bbf59')}
 function bgHall(){r(0,0,W,24,'#2c2a33');r(0,24,W,68,'#5f6e5a');r(0,92,W,40,'#4a3a2e');r(0,90,W,3,'#8a7656');for(let x=0;x<W;x+=14)r(x,95,1,37,'#3b2e24');dz(0,24,W,108,'#4f5c4b',600);
 r(0,132,W,48,'#3e403a');for(let y=132;y<180;y+=8)for(let x=((y/8)%2)*12;x<W;x+=24)r(x,y,12,8,'#484a43');
 [80,170,260].forEach(x=>{r(x-9,24,18,3,'#cbbd90')});r(196,24,18,5,'#3b4750');
@@ -58,13 +94,22 @@ r(128,100,3,16,'#c2a77c');r(128,116,22,5,'#d9c298');r(129,121,3,13,'#c2a77c');r(
 r(284,82,5,8,'#cfe4ee')}
 const BG={};
 /* ---------- state ---------- */
-const S={sc:'apt',st:'title',lock:1,dk:.22,flick:0,lt:0,fr:0,insp:0,hb:0,sil:0,run:0,gap:0,shp:0,lampOut:0,nbd:{x:4,y:44,w:26,h:90}};
+const S={veg:1,coke:1,sc:'apt',st:'title',lock:1,dk:.1,flick:0,lt:0,fr:0,insp:0,hb:0,sil:0,run:0,gap:0,shp:0,lampOut:0,nbd:{x:4,y:44,w:26,h:90}};
 const got={k:0,w:0,u:0};let M_={x:-9,y:-9};
 function dyn(t){if(S.sc==='apt'){
- r(198,100,38,22,'#26334a');if(R()<.04)r(198,100+R()*18,38,3,'#3b4f72');
- for(let i=0;i<16;i++){const x=126+(i*37%54),y=30+((t*70*(.5+i%3*.3)+i*29)%44);r(x,y,1,3,'rgba(130,160,210,.8)')}
- if(!got.k)r(124,111,8,5,'#e0b050');if(!got.w)r(146,111,14,6,'#4a3326');if(!got.u){r(166,86,6,34,'#2d6a6a');r(164,84,10,4,'#3f8a8a')}
- if(S.key2)r(158,111,10,4,'#f0c860')}
+ const lt=S.lt;r(98,24,56,48,lt?'#dbe7ff':'#2c3b66');r(98,24,56,18,lt?'#eef3ff':'#222f58');
+ [[100,50,8,22],[110,44,10,28],[124,52,8,20],[134,40,10,32],[146,48,8,24]].forEach(([x,y,w,h],i)=>{r(x,y,w,h,lt?'#8fa0c4':'#161d3a');if(!lt&&i%2==0)r(x+2,y+4,2,2,'#ffd36a')});
+ if(lt){let bx=128;for(let y=24;y<56;y+=4){const nx=bx+((y*13)%7-3);r(Math.min(bx,nx),y,2,4,'#fff');bx=nx}}
+ for(let i=0;i<16;i++){const x=100+(i*37%52),y=24+((t*80*(.5+i%3*.3)+i*29)%46);r(x,y,1,3,'rgba(190,210,255,.7)')}
+ r(124,24,3,48,'#fff6e2');r(98,46,56,3,'#fff6e2');
+ for(let i=0;i<18;i++){const x=6+i*17,y=7+Math.sin(x/16)*3;r(x,y,3,4,['#ffd36a','#f290a6','#9fd3cf','#fff6e2'][i%4]);if((t*2+i)%3<1)r(x-1,y-1,5,6,'rgba(255,230,150,.35)')}
+ r(206,78,36,22,'#6aa5d8');r(206,78+(t*10%22),36,3,'#8fc0ec');if(R()<.03)r(206,78,36,22,'#9fd0f5');
+ r(172,102,9,8,'#f290a6');r(181,104,2,4,'#f290a6');r(175+Math.sin(t*3)*1.5,98-(t*6%7),1,3,'rgba(255,255,255,.7)');
+ if(!got.k)r(116,104,12,6,'#e0b050');if(!got.w)r(136,104,16,6,'#7a4a32');if(!got.u){r(181,82,3,34,'#2d6a6a');r(176,78,13,5,'#3f9a9a')}
+ if(S.key2)r(148,104,12,4,'#f0c860')}
+else if(S.sc==='fr'){
+ if(S.coke){r(210,76,18,28,'#d6242e');r(210,78,18,3,'#eee');r(213,90,12,3,'#fff');r(211,74,16,3,'#b8bcc2')}
+ if(S.veg){r(108,130,66,14,'#5d7a2e');r(112,132,10,6,'#4a3a1e');r(140,134,14,6,'#3b2c18');r(160,131,8,5,'#6a5a3a');dz(108,130,66,14,'#cfd8c0',14);for(let i=0;i<3;i++)r(118+Math.sin(t*3+i*2)*22+i*16,116+Math.cos(t*4+i)*7,1,1,'#222')}}
 else if(S.sc==='hall'){
  if(S.st!=='back'&&S.st!=='in'&&S.st!=='run'&&S.st!=='last'){ppl(58,72,'#8a6a7a','#d9b79a','#aaa');ppl(224,66,'#3f4f66','#cfa88a','#2a2018')}
  const gx=186-S.gap;if(S.gap){r(gx,44,S.gap,88,'#12151d');if(S.shp){X.save();X.beginPath();X.rect(gx,44,S.gap,88);X.clip();r(gx+S.gap/2-3,66,7,7,'#020203');r(gx+S.gap/2-6,72,13,40,'#020203');X.restore()}}
@@ -74,28 +119,53 @@ else{
  if(S.run){r(4,44,26,90,'#2b2a2a');const d=S.nbd;door(d.x,d.y,d.w,d.h,'#3a2a24')}
  if(S.tvOn){r(180,74,32,22,'#222');dz(180,74,32,22,'#ddd',90);dz(180,74,32,22,'#555',60)}}}
 function fx(){if(S.sc==='nb'){const rad=S.run?42:64,g=X.createRadialGradient(M_.x,M_.y,4,M_.x,M_.y,rad);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.95)');X.fillStyle=g;X.fillRect(0,0,W,H)}
-else{X.fillStyle='rgba(5,7,16,'+S.dk+')';X.fillRect(0,0,W,H);X.globalCompositeOperation='lighter';
- const gl=S.sc==='apt'?[[153,22,130,.5]]:[[80,26,80,.4],[170,26,80,.4],[260,26,80,.4]].filter((_,i)=>!(i===1&&S.lampOut));
+else{X.fillStyle='rgba(5,7,16,'+((S.sc==='fr'||S.sc==='bath')?.04:S.dk)+')';X.fillRect(0,0,W,H);X.globalCompositeOperation='lighter';
+ const gl=S.sc!=='hall'?[[S.sc==='apt'?153:160,22,150,.4]]:[[80,26,80,.4],[170,26,80,.4],[260,26,80,.4]].filter((_,i)=>!(i===1&&S.lampOut));
  for(const[x,y,rd,a]of gl){const g=X.createRadialGradient(x,y,2,x,y,rd);g.addColorStop(0,'rgba(255,190,100,'+a+')');g.addColorStop(1,'rgba(255,190,100,0)');X.fillStyle=g;X.fillRect(0,0,W,H)}
  X.globalCompositeOperation='source-over'}
-if(S.lt){X.fillStyle='rgba(170,195,255,.3)';X.fillRect(0,0,W,H)}
+if(S.lt){X.fillStyle='rgba(170,195,255,.12)';X.fillRect(0,0,W,H)}
 if(S.flick&&R()<.22){X.fillStyle='rgba(0,0,0,.65)';X.fillRect(0,0,W,H)}}
 
 /* ---------- hotspots (x,y,w,h in canvas pixels) ---------- */
 const hit=(a,b)=>a.find(s=>b.x>=s.x&&b.x<=s.x+s.w&&b.y>=s.y&&b.y<=s.y+s.h);
 function HS(){if(S.lock)return[];
 if(S.sc==='apt')return[
-{n:'Window',x:112,y:20,w:84,h:64,f:()=>note("Day six. The rain hasn't paused once.")},
-{n:'Bed',x:6,y:96,w:72,h:38,f:()=>note("Unmade. The sheets remember me.")},
-{n:'Bookshelf',x:82,y:50,w:34,h:84,f:()=>note("Three unread paperbacks. Two I've reread to death.")},
-{n:'TV',x:194,y:96,w:46,h:38,f:()=>note("Forty-one episodes in. Don't judge me.")},
-{n:'Refrigerator',x:246,y:40,w:38,h:94,f:fridge},
-{n:'Door',x:288,y:44,w:28,h:90,f:aptDoor},
-{n:'Table',x:116,y:116,w:64,h:20,f:()=>note("Where my keys go to hide.")},
-!got.k&&{n:'Keys',x:122,y:108,w:14,h:10,f:()=>{got.k=1;note("Keys.")}},
-!got.w&&{n:'Wallet',x:144,y:108,w:18,h:10,f:()=>{got.w=1;note("Wallet. Eleven dollars and a loyalty card.")}},
-!got.u&&{n:'Umbrella',x:162,y:82,w:14,h:40,f:()=>{got.u=1;note("Umbrella. It has opinions about the wind.")}},
-S.key2&&{n:'Key',x:156,y:108,w:14,h:8,f:()=>note("A key. My apartment number is stamped on it.")}].filter(Boolean);
+{n:'Fairy lights',x:0,y:0,w:320,h:12,f:()=>note("Tiny fairy lights. Free serotonin.")},
+{n:'Bunny plush',x:56,y:76,w:22,h:24,f:()=>note("Mr. Biscuit. He's seen things. He doesn't talk about them.")},
+{n:'Bed',x:6,y:66,w:80,h:64,f:bed},
+{n:'Curtains',x:80,y:12,w:20,h:68,f:()=>note("Pink curtains with little ties. I sewed one back on myself. I'm proud.")},
+{n:'Curtains',x:152,y:12,w:20,h:68,f:()=>note("Pink curtains with little ties. I sewed one back on myself. I'm proud.")},
+{n:'Window plant',x:96,y:44,w:16,h:30,f:()=>note("Pothos. Hasn't died. We're both surprised.")},
+{n:'Window',x:96,y:22,w:56,h:52,f:()=>note(S.lt?"Lightning! ...I'm counting. One... two...":"Day six. The rain hasn't paused once. It's kind of cozy, honestly.")},
+{n:'Bathroom',x:168,y:38,w:28,h:90,f:()=>go('bath')},
+{n:'Little pictures',x:204,y:14,w:44,h:24,f:()=>note("A hill, a sun, a very optimistic cloud. Thrifted. Loved.")},
+{n:'Shelf',x:204,y:40,w:50,h:22,f:()=>note("A cactus I haven't killed, and books I'll start tomorrow.")},
+{n:'TV',x:200,y:76,w:48,h:54,f:()=>note("Forty-one episodes in. Don't judge me.")},
+{n:'Refrigerator',x:256,y:36,w:36,h:98,f:openFridge},
+{n:'Front door',x:294,y:42,w:26,h:92,f:aptDoor},
+!got.k&&{n:'Keys',x:114,y:102,w:16,h:10,f:()=>{got.k=1;note("Keys.")}},
+!got.w&&{n:'Wallet',x:134,y:102,w:20,h:10,f:()=>{got.w=1;note("Wallet. Eleven dollars and a loyalty card.")}},
+!got.u&&{n:'Umbrella',x:174,y:78,w:16,h:40,f:()=>{got.u=1;note("Umbrella. It has opinions about the wind.")}},
+S.key2&&{n:'Key',x:146,y:102,w:16,h:8,f:()=>note("A key. My apartment number is stamped on it.")},
+{n:'Mug',x:170,y:100,w:14,h:12,f:()=>note("Hot cocoa. Still warm. Somehow always still warm.")},
+{n:'Table',x:110,y:110,w:82,h:28,f:()=>note("Breakfast, desk, and crisis-management center.")},
+{n:'Slippers',x:36,y:146,w:26,h:10,f:()=>note("Fluffy. Pink. Zero regrets.")},
+{n:'Rug',x:92,y:136,w:128,h:36,f:()=>note("It ties the room together. Also it hides a stain.")}].filter(Boolean);
+if(S.sc==='fr')return[
+{n:'Water',x:68,y:22,w:18,h:44,f:()=>note("Half a bottle. Optimist or pessimist? Depends who you ask.")},
+{n:'Jam',x:94,y:42,w:18,h:24,f:()=>note("Strawberry. Expired in spring. The label is adorable though.")},
+S.coke&&{n:'Can of Coke',x:208,y:74,w:22,h:32,f:coke},
+S.veg&&{n:'Rotten vegetable',x:106,y:126,w:70,h:20,f:veg},
+{n:'Close fridge',x:0,y:0,w:40,h:180,f:()=>go('apt')},{n:'Close fridge',x:280,y:0,w:40,h:180,f:()=>go('apt')},{n:'Close fridge',x:48,y:150,w:224,h:30,f:()=>go('apt')}].filter(Boolean);
+if(S.sc==='bath')return[
+{n:'Rubber duck',x:78,y:100,w:16,h:14,f:()=>note("Sir Quackalot. Chief of bath-time security.")},
+{n:'Shower',x:6,y:34,w:92,h:104,f:()=>note("A tiny shower with a duck curtain. I sing in here. Badly. On purpose.")},
+{n:'Toilet',x:126,y:60,w:40,h:72,f:()=>note(S.sick?"We have been through something together, you and I.":"The toilet. Respectfully, not now.")},
+{n:'Mirror',x:200,y:30,w:44,h:50,f:mirrorB},
+{n:'Sink',x:200,y:84,w:44,h:48,f:()=>note("Tiny sink. Tiny soap shaped like a shell. Too cute to use.")},
+{n:'Towel',x:260,y:38,w:26,h:58,f:()=>note("Fluffy. Warm from the radiator. Best invention.")},
+{n:'Bath mat',x:118,y:148,w:64,h:18,f:()=>note("Squishy mat. Stepping on it feels like a tiny hug.")},
+{n:'Door',x:290,y:42,w:26,h:92,f:()=>go('apt')}];
 if(S.sc==='hall'){const run=S.st==='run',pe=S.st==='hall';return[
 {n:'My apartment',x:12,y:44,w:32,h:88,f:()=>note(run?"Too far.":pe?"Groceries first.":"Not yet. That other door is bothering me.")},
 pe&&{n:'Neighbour',x:54,y:70,w:24,h:62,f:async()=>{S.lock=1;await say("“Still raining.”",1800);await say("She glances past me, toward the far end of the hall. Then back. Like nothing happened.",4200);S.lock=0}},
@@ -124,23 +194,23 @@ const seen={};function insp(k,t){note(t);if(seen[k])return;seen[k]=1;if(++S.insp
 const setObj=t=>{$('obj').textContent=t?'▸ '+t:''};
 
 /* ---------- audio (fully synthesised) ---------- */
-let A,mg,rainG,humG,musG,NB;
-function initAudio(){A=new (window.AudioContext||window.webkitAudioContext)();mg=A.createGain();mg.gain.value=.85;mg.connect(A.destination);
+let A,mg,rainG,humG,musG,NB,bm,br,bs;
+function initAudio(){A=new (window.AudioContext||window.webkitAudioContext)();mg=A.createGain();mg.gain.value=.85;mg.connect(A.destination);bm=A.createGain();br=A.createGain();bs=A.createGain();[bm,br,bs].forEach(g=>g.connect(mg));
 NB=A.createBuffer(1,A.sampleRate*2,A.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=R()*2-1;
-rainG=A.createGain();rainG.gain.value=0;rainG.connect(mg);
-const loop=(f,q,t,g)=>{const s=A.createBufferSource();s.buffer=NB;s.loop=true;const fl=A.createBiquadFilter();fl.type=t;fl.frequency.value=f;fl.Q.value=q;const gn=A.createGain();gn.gain.value=g;s.connect(fl);fl.connect(gn);gn.connect(rainG);s.start()};
-loop(2600,.4,'bandpass',.5);loop(700,.5,'lowpass',.35);
-humG=A.createGain();humG.gain.value=0;const lp=A.createBiquadFilter();lp.type='lowpass';lp.frequency.value=170;[55,58.4,82.5].forEach(f=>{const o=A.createOscillator();o.type='sawtooth';o.frequency.value=f;o.connect(lp);o.start()});lp.connect(humG);humG.connect(mg);
-musG=A.createGain();musG.gain.value=0;musG.connect(mg);rain(.5,3);
-const sc=[523.25,587.33,659.25,783.99,880,392];
-setInterval(()=>{if(musG.gain.value>.01&&R()<.55)blip(sc[R()*sc.length|0]*(R()<.3?.5:1),2.6,.12,'sine',musG)},650);
+rainG=A.createGain();rainG.gain.value=0;rainG.connect(br);
+const loop=(f,q,t,g)=>{const s=A.createBufferSource();s.buffer=NB;s.loop=true;const fl=A.createBiquadFilter();fl.type=t;fl.frequency.value=f;fl.Q.value=q;const gn=A.createGain();gn.gain.value=g;s.connect(fl);fl.connect(gn);gn.connect(rainG);s.start();return gn};
+loop(6500,.2,'highpass',.1);const g2=loop(2200,.35,'bandpass',.28);loop(900,.5,'lowpass',.18);loop(200,.7,'lowpass',.3);const lf=A.createOscillator(),lg=A.createGain();lf.frequency.value=.13;lg.gain.value=.07;lf.connect(lg);lg.connect(g2.gain);lf.start();setInterval(()=>{if(rainG.gain.value>.1&&R()<.6)nz(2500+R()*2500,.04,.05)},90);
+humG=A.createGain();humG.gain.value=0;const lp=A.createBiquadFilter();lp.type='lowpass';lp.frequency.value=170;[55,58.4,82.5].forEach(f=>{const o=A.createOscillator();o.type='sawtooth';o.frequency.value=f;o.connect(lp);o.start()});lp.connect(humG);humG.connect(bs);
+musG=A.createGain();musG.gain.value=0;musG.connect(bm);rain(.5,3);applyVol();
+const mel=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46],bas=[130.81,174.61,196,146.83];let mi=0;
+setInterval(()=>{if(musG.gain.value>.01){const k=mi++;if(R()<.85)blip(mel[k%8],1.4,.12,'triangle',musG);if(k%8==0)blip(bas[(k>>3)%4],3.2,.14,'sine',musG)}},520);
 (function drip(){if(!S.sil)blip(900+R()*900,.06,.04+R()*.03);setTimeout(drip,1200+R()*3800)})();
-(function storm(){if(S.sc==='apt'&&!S.lock&&R()<.5){S.lt=1;thunder();setTimeout(()=>S.lt=0,110)}setTimeout(storm,14000+R()*14000)})();
+(function storm(){if(S.sc==='apt'&&!S.lock){S.lt=1;setTimeout(()=>S.lt=0,90);setTimeout(()=>S.lt=1,200);setTimeout(()=>S.lt=0,330);setTimeout(thunder,500+R()*1500)}setTimeout(storm,9000+R()*9000)})();
 setInterval(()=>{if(S.hb){thump(.35);setTimeout(()=>thump(.2),190)}},780)}
-function blip(f,dur,v,type,dest){if(!A)return;const o=A.createOscillator(),g=A.createGain(),t=A.currentTime;o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(dest||mg);o.start(t);o.stop(t+dur+.05)}
-function nz(f,dur,v){if(!A)return;const s=A.createBufferSource(),fl=A.createBiquadFilter(),g=A.createGain(),t=A.currentTime;s.buffer=NB;fl.type='lowpass';fl.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);s.connect(fl);fl.connect(g);g.connect(mg);s.start(t,R());s.stop(t+dur)}
-const thump=v=>{if(!A)return;const o=A.createOscillator(),g=A.createGain(),t=A.currentTime;o.frequency.setValueAtTime(75,t);o.frequency.exponentialRampToValueAtTime(35,t+.15);g.gain.setValueAtTime(v*1.4,t);g.gain.exponentialRampToValueAtTime(.0001,t+.2);o.connect(g);g.connect(mg);o.start(t);o.stop(t+.25)};
-const knock=()=>{nz(260,.16,.9);thump(.9)},thunder=()=>nz(110,3.2,.7),step=v=>nz(380,.07,v||.1),ding=()=>{blip(1320,1,.1);setTimeout(()=>blip(990,1.2,.08),160)};
+function blip(f,dur,v,type,dest){if(!A)return;const o=A.createOscillator(),g=A.createGain(),t=A.currentTime;o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(dest||bs);o.start(t);o.stop(t+dur+.05)}
+function nz(f,dur,v){if(!A)return;const s=A.createBufferSource(),fl=A.createBiquadFilter(),g=A.createGain(),t=A.currentTime;s.buffer=NB;fl.type='lowpass';fl.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);s.connect(fl);fl.connect(g);g.connect(bs);s.start(t,R());s.stop(t+dur)}
+const thump=v=>{if(!A)return;const o=A.createOscillator(),g=A.createGain(),t=A.currentTime;o.frequency.setValueAtTime(75,t);o.frequency.exponentialRampToValueAtTime(35,t+.15);g.gain.setValueAtTime(v*1.4,t);g.gain.exponentialRampToValueAtTime(.0001,t+.2);o.connect(g);g.connect(bs);o.start(t);o.stop(t+.25)};
+const knock=()=>{nz(260,.16,.9);thump(.9)},thunder=()=>{nz(90,4,.7);setTimeout(()=>nz(160,2.5,.4),500)},step=v=>nz(380,.07,v||.1),ding=()=>{blip(1320,1,.1);setTimeout(()=>blip(990,1.2,.08),160)};
 const hum=(v,s)=>humG&&humG.gain.linearRampToValueAtTime(v,A.currentTime+(s||1.5));
 const mus=v=>musG&&musG.gain.linearRampToValueAtTime(v,A.currentTime+2);
 const rain=(v,s)=>rainG&&rainG.gain.linearRampToValueAtTime(v,A.currentTime+(s||2));
@@ -152,7 +222,17 @@ await say("Horror protagonists have a death wish. I have a couch.",3600);
 await say("I don't investigate strange noises. I turn the volume up.",3800);
 await say("Unfortunately... I was out of food.",3200);
 await card("THE OPEN DOOR",3200,'t');S.st='apt';mus(.5);await fade(0,1200);S.lock=0}
-async function fridge(){if(S.fr)return note("Still empty. Still embarrassing.");S.fr=1;S.lock=1;await say("Half a bottle of water. Something expired. One sad vegetable.",4200);await say("Right. That's embarrassing.",2400);S.lock=0;setObj('GET GROCERIES')}
+async function go(sc,k){S.lock=1;await fade(1,350);S.sc=sc;await fade(0,350);if(!k)S.lock=0}
+async function openFridge(){S.lock=1;blip(300,.2,.1);await go('fr',1);if(!S.fr){S.fr=1;await say("Inside: half a bottle of water, a can of Coke, and one very sad vegetable.",4200);await say("Right. That's embarrassing.",2400);setObj('GET GROCERIES')}S.lock=0}
+async function bed(){S.lock=1;await say("My bed. The softest place on Earth.",2600);const c=await choose('LIE DOWN','NOT NOW');if(c){S.lock=0;return note("Stay strong. Groceries.")}
+await fade(1,900);await wait(1400);await fade(0,900);await say("Ten minutes later. Productivity: zero. Mood: 100.",3200);S.lock=0}
+async function coke(){S.coke=0;S.lock=1;nz(5000,.5,.25);await say("Pshhht. Cold, sweet, perfect.",2600);await say("Tiny burp. Morale +1.",2200);S.lock=0}
+async function veg(){S.lock=1;await say("It's fuzzy. It used to be a cucumber. Probably.",3000);const c=await choose('EAT IT','LEAVE IT');if(c){S.lock=0;return note("Wise. Future me says thanks.")}
+await say("Crunch. ...Soft. Wrong. Very wrong.",3200);S.veg=0;await say("I don't feel so good.",2200);await go('bath',1);await say("Oh no.",1400);await say("Oh no no no.",1800);
+S.shake=7;for(let i=0;i<3;i++){nz(650,.7,.6);thump(.5);await wait(900)}S.shake=0;S.sick=1;
+await say("...Never again.",2400);await say("I feel like a new person. A hollow, regretful person.",3600);S.lock=0}
+const MQ=["Hello, gorgeous. Okay, hello, tired.","I look exactly like someone who's been indoors for six days.","Hair: a situation. Vibes: immaculate.","Mirror, mirror... is there anything in my teeth?","Is that a new freckle? Cute.","We look good today. Just don't look behind us. (Joking!)","Pep talk: you are brave. You are going to the grocery store. Wow.","I should wave first. In case the reflection waves second."];
+let lastQ=-1;function mirrorB(){let i;do i=R()*MQ.length|0;while(i===lastQ);lastQ=i;note(MQ[i])}
 function aptDoor(){if(S.st==='home')return note("I'm not going back out there.");if(!S.fr)return note("Fridge first. Let me see what I actually have.");const m=[!got.k&&'keys',!got.w&&'wallet',!got.u&&'umbrella'].filter(Boolean);if(m.length)return note("Still need: "+m.join(', ')+".");leave()}
 async function leave(){S.lock=1;mus(0);await say("Keys. Wallet. Umbrella. Deep breath. Out.",3200);await fade(1,600);S.sc='hall';S.st='hall';S.dk=.4;rain(.42);hum(.025);await fade(0,900);S.lock=0;
 await say("The hallway behind me is empty. Of course it is.",3200)}
@@ -191,11 +271,17 @@ knock();await wait(1700);knock();await wait(1500);knock();await wait(2500);await
 knock();await wait(220);knock();await wait(220);knock();await fade(1,100);await wait(1800);
 await card("THE OPEN DOOR",4000,'t');await card("CASE 001 — STATUS: UNRESOLVED\n\nNEW FILE AVAILABLE:\nTHE APARTMENT",7000);const e=$('cd');e.className='';e.textContent="(reload to play again)";e.style.opacity=1}
 
+const ST=(()=>{try{return JSON.parse(localStorage.getItem('tod'))||{}}catch(e){return{}}})();Object.assign(ST,{m:ST.m??.8,mu:ST.mu??.7,r:ST.r??.7,s:ST.s??.8,mute:ST.mute||0});
+function applyVol(){$('mt').textContent=ST.mute?'🔇':'🔊';try{localStorage.setItem('tod',JSON.stringify(ST))}catch(e){}if(!A)return;mg.gain.value=ST.mute?0:ST.m;bm.gain.value=ST.mu;br.gain.value=ST.r;bs.gain.value=ST.s}
+['m','mu','r','s'].forEach(k=>{const e=$('v_'+k);e.value=ST[k]*100;e.oninput=()=>{ST[k]=e.value/100;applyVol()}});
+const tg=()=>{$('set').style.display=$('set').style.display==='flex'?'none':'flex'};
+$('gr').onclick=tg;$('sx').onclick=tg;$('mt').onclick=()=>{ST.mute=ST.mute?0:1;applyVol()};applyVol();
+addEventListener('keydown',e=>{if(e.code==='KeyM')$('mt').onclick()});
 /* ---------- input + loop ---------- */
 function mpos(e){const b=C.getBoundingClientRect(),s=Math.min(b.width/W,b.height/H);return{x:(e.clientX-b.left-(b.width-W*s)/2)/s,y:(e.clientY-b.top-(b.height-H*s)/2)/s}}
 addEventListener('pointermove',e=>{M_=mpos(e)});
-addEventListener('pointerdown',e=>{if(e.target.closest('button,#st'))return;M_=mpos(e);const g=hit(HS(),M_);if(g)g.f()});
+addEventListener('pointerdown',e=>{if(e.target.closest('button,#st,#set,#ui'))return;M_=mpos(e);const g=hit(HS(),M_);if(g)g.f()});
 $('st').onclick=begin;
-function frame(ms){const t=ms/1000;X.drawImage(BG[S.sc],0,0);dyn(t);fx();const g=hit(HS(),M_);$('pr').textContent=g&&g.n?g.n:'';C.style.cursor=g?'pointer':'default';requestAnimationFrame(frame)}
-BG.apt=bg(bgApt);BG.hall=bg(bgHall);BG.nb=bg(bgNb);requestAnimationFrame(frame);
+function frame(ms){const t=ms/1000,sk=S.shake?(R()-.5)*S.shake:0;X.setTransform(1,0,0,1,sk,sk);X.drawImage(BG[S.sc],0,0);dyn(t);fx();X.setTransform(1,0,0,1,0,0);const g=hit(HS(),M_);$('pr').textContent=g&&g.n?g.n:'';C.style.cursor=g?'pointer':'default';requestAnimationFrame(frame)}
+BG.apt=bg(bgApt);BG.hall=bg(bgHall);BG.nb=bg(bgNb);BG.fr=bg(bgFr);BG.bath=bg(bgBath);requestAnimationFrame(frame);
 </script></body></html>
